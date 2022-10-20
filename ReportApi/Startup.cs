@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ReportApi.DataLayer;
+using StackExchange.Redis;
 using System;
 
 namespace ReportApi
@@ -25,7 +25,7 @@ namespace ReportApi
         {
             services.AddControllers();
             services.AddDbContext<ReportsDataContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
-
+            services.AddSingleton<IConnectionMultiplexer>(x => ConnectionMultiplexer.Connect(Configuration["Redis"]));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ReportApi", Version = "v1" });

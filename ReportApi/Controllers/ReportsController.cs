@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using ReportApi.DataLayer;
 using ReportApi.Models;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,10 +21,12 @@ namespace ReportApi.Controllers
     {
         public IConfiguration Configuration { get; }
         private ReportsDataContext context;
-        public ReportsController(ReportsDataContext context, IConfiguration config)
+        public IConnectionMultiplexer ConnectionMultiplexer;
+        public ReportsController(ReportsDataContext context, IConfiguration config, IConnectionMultiplexer connection)
         {
             this.context = context;
             this.Configuration = config;
+            this.ConnectionMultiplexer = connection;
         }
         public async Task<List<Contracts>> GetJson()
         {
@@ -49,15 +53,26 @@ namespace ReportApi.Controllers
             var data = await (from c in context.Reports select c).ToListAsync();
             return data;
         }
-        [HttpGet("GetStatisticReport/{Location}")]
-        public async Task<List<ReportViewModel>> GetStatisticReport(string Location)
+        [HttpGet("GetReportDetails/{ReportId}")]
+        public async Task<List<Reports>> GetReportDetails(int ReportId)
         {
+            var data = await (from c in context.Reports where c.ReportsId == ReportId select c).ToListAsync();
+            return data;
+        }
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ReportViewModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpPut("GetStatisticReport/{Location}")]
+        public async Task<IActionResult> GetStatisticReport(string Location)
+        {
+            var pubSub = ConnectionMultiplexer.GetSubscriber(); 
+            pubSub.Subscribe("report-q", (channel, message) => DisplayMessage(message));
+            pubSub.Publish("report-q","Report Preparing...");
+
             Reports reports = new()
             {
                 ReportDate = DateTime.Now,
                 ReportStatus = ReportStatus.Preparing
             };
-
             await context.Reports.AddAsync(reports);
             await context.SaveChangesAsync();
 
@@ -72,12 +87,12 @@ namespace ReportApi.Controllers
                               c.InfoType == InfoType.PhoneNumber
                               select c).ToList().Count;
 
-            Thread.Sleep(10000);
             var ContractCount = data.Where(x => x.InfoValue == Location.ToUpper())
                                     .GroupBy(g => g.ContractsId).ToList().Count;
 
             var list = new List<ReportViewModel>();
-            ReportViewModel viewModel = new ReportViewModel();
+            var viewModel = new ReportViewModel();
+
             viewModel.Location = Location.ToUpper();
             viewModel.TotalContract = ContractCount;
             viewModel.TotalPhone = PhoneCount;
@@ -86,7 +101,14 @@ namespace ReportApi.Controllers
             reports.ReportStatus = ReportStatus.Done;
             context.Reports.Attach(reports);
             await context.SaveChangesAsync();
-            return list;
+            await pubSub.PublishAsync("report-q", "Report is ready!");
+            await pubSub.PublishAsync("report-q",JsonConvert.SerializeObject(list));
+            return Ok(list);
+        }
+
+        private void DisplayMessage(RedisValue message)
+        {
+
         }
     }
 }
