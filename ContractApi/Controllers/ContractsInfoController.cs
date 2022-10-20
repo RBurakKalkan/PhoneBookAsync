@@ -21,9 +21,13 @@ namespace ContractApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> AddContractInfo(int ContractId, InfoType InfoType, string InfoValue)
         {
-            if (!await context.Contracts.AnyAsync(x => x.ContractsId == ContractId))
+            if (!await context.Contracts.AnyAsync(x => x.ContractsId == ContractId)) // If Contract does not exist, do not add info.
             {
                 return NotFound("Contract Not Found.");
+            }
+            if (await context.ContractsInfo.AnyAsync(x => x.InfoType == InfoType.Location && x.ContractsId == ContractId && InfoType == InfoType.Location))// If Contact has a location do not add one.
+            {
+                return NotFound("Contract already has a Location Info");
             }
             ContractsInfo contractsInfo = new()
             {

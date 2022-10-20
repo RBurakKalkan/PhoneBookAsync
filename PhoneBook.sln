@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32630.194
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContractApi", "ContractApi\ContractApi.csproj", "{031C77F1-5F4D-40F9-B7EA-79A97CEDEA13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ContractApi", "ContractApi\ContractApi.csproj", "{031C77F1-5F4D-40F9-B7EA-79A97CEDEA13}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{CA42451A-3396-4D9A-8A19-03380D8F8C3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReportApi", "ReportApi\ReportApi.csproj", "{9942EB65-05C1-4CB6-AE16-EF85DE8EB142}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReportApi", "ReportApi\ReportApi.csproj", "{9942EB65-05C1-4CB6-AE16-EF85DE8EB142}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "MessageBroker\MessageBroker.csproj", "{D6A84DC5-4A19-4E7F-A9BB-520509D94FFF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{9942EB65-05C1-4CB6-AE16-EF85DE8EB142}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9942EB65-05C1-4CB6-AE16-EF85DE8EB142}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9942EB65-05C1-4CB6-AE16-EF85DE8EB142}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6A84DC5-4A19-4E7F-A9BB-520509D94FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6A84DC5-4A19-4E7F-A9BB-520509D94FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6A84DC5-4A19-4E7F-A9BB-520509D94FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6A84DC5-4A19-4E7F-A9BB-520509D94FFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,6 +36,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{031C77F1-5F4D-40F9-B7EA-79A97CEDEA13} = {CA42451A-3396-4D9A-8A19-03380D8F8C3D}
 		{9942EB65-05C1-4CB6-AE16-EF85DE8EB142} = {CA42451A-3396-4D9A-8A19-03380D8F8C3D}
+		{D6A84DC5-4A19-4E7F-A9BB-520509D94FFF} = {CA42451A-3396-4D9A-8A19-03380D8F8C3D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {493E75F1-66AD-42B2-BBF7-88E17C36F33B}

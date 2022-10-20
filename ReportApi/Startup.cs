@@ -1,3 +1,5 @@
+using GreenPipes;
+using MassTransit;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -24,10 +26,22 @@ namespace ReportApi
 
             services.AddControllers();
             services.AddDbContext<ReportsDataContext>(options => options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ReportApi", Version = "v1" });
             });
+
+            services.AddMassTransit(config =>
+            {
+                config.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(cfg =>
+                {
+
+                    cfg.Host("amqp://guest:guest@localhost:5672");
+
+                }));
+            });
+            services.AddMassTransitHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
