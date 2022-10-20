@@ -33,7 +33,7 @@ namespace ContractApi.Controllers
             {
                 ContractsId = ContractId,
                 InfoType = InfoType,
-                InfoValue = InfoValue
+                InfoValue = InfoValue.ToUpper()
             };
 
             await context.ContractsInfo.AddAsync(contractsInfo);
@@ -57,6 +57,5 @@ namespace ContractApi.Controllers
             await context.SaveChangesAsync();
             return Ok(ContractInfo);
         }
-
     }
 }

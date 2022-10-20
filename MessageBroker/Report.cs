@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace MessageBroker
 {
-    public class ReportOrder
+    public class Report
     {
-        public string Location { get; set; }
+        public string Description { get; set; }
     }
 }

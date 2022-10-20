@@ -25,6 +25,7 @@ namespace ContractApi.Controllers
                 ContractsId = c.ContractsId,
                 Name = c.Name,
                 Surname = c.Surname,
+                FirmName = c.FirmName,
                 ContractsInfo = c.ContractsInfo
             }).ToArrayAsync();
 
@@ -37,7 +38,8 @@ namespace ContractApi.Controllers
             {
                 ContractsId = c.ContractsId,
                 Name = c.Name,
-                Surname = c.Surname
+                Surname = c.Surname,
+                FirmName = c.FirmName
             }).ToArrayAsync();
 
             return query;
@@ -51,15 +53,16 @@ namespace ContractApi.Controllers
             return query;
         }
 
-        [HttpPost("AddContract/{Name}/{Surname}")]
+        [HttpPost("AddContract/{Name}/{Surname}/{FirmName}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Contracts))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddContract(string Name, string Surname)
+        public async Task<IActionResult> AddContract(string Name, string Surname,string FirmName)
         {
             Contracts contracts = new()
             {
                 Name = Name,
                 Surname = Surname,
+                FirmName = FirmName
             };
 
             await context.Contracts.AddAsync(contracts);

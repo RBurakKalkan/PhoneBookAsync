@@ -1,12 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using ReportApi.DataLayer;
 using ReportApi.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ReportApi.Controllers
@@ -21,7 +24,7 @@ namespace ReportApi.Controllers
             this.context = context;
             this.Configuration = config;
         }
-        public async Task<string> GetJson()
+        public async Task<List<Contracts>> GetJson()
         {
             var url = Configuration["ContractApi"] + "/GetContractsAndInfos";
             var responseString = "";
@@ -36,26 +39,54 @@ namespace ReportApi.Controllers
                     responseString = await reader.ReadToEndAsync();
                 }
             }
-            return responseString;
+            var rss = JsonConvert.DeserializeObject<List<Contracts>>(responseString);
+            return rss;
         }
-        [HttpGet("GetContractCount")]
-        public async Task<List<Contracts>> GetContractCount(string Location)
-        {
-            string json = await GetJson();
 
-            var rss = JsonConvert.DeserializeObject<List<Contracts>>(json);
+        [HttpGet("GetReports")]
+        public async Task<List<Reports>> GetReports()
+        {
+            var data = await (from c in context.Reports select c).ToListAsync();
+            return data;
+        }
+        [HttpGet("GetStatisticReport/{Location}")]
+        public async Task<List<ReportViewModel>> GetStatisticReport(string Location)
+        {
+            Reports reports = new()
+            {
+                ReportDate = DateTime.Now,
+                ReportStatus = ReportStatus.Preparing
+            };
+
+            await context.Reports.AddAsync(reports);
+            await context.SaveChangesAsync();
+
+            var rss = await GetJson();
 
             var data = rss.SelectMany(x => x.ContractsInfo, (parent, child) => new { child.ContractsId, child.InfoType, child.InfoValue }).ToList();
 
-            int[] ContractsOnLocation = data.Where(x => x.InfoValue == Location)
+            int[] ContractsOnLocation = data.Where(x => x.InfoValue == Location.ToUpper()) // gets the contracts IDs who has a phone in the specified location
                                             .Select(x => x.ContractsId).ToArray();
-            var PhoneCount = (from c in data 
+            var PhoneCount = (from c in data
                               where ContractsOnLocation.Contains(c.ContractsId) &&
-                              c.InfoType == InfoType.PhoneNumber select c).ToList().Count;
+                              c.InfoType == InfoType.PhoneNumber
+                              select c).ToList().Count;
 
-            var ContractCount = data.Where(x => x.InfoValue == Location)
+            Thread.Sleep(10000);
+            var ContractCount = data.Where(x => x.InfoValue == Location.ToUpper())
                                     .GroupBy(g => g.ContractsId).ToList().Count;
-            return rss;
+
+            var list = new List<ReportViewModel>();
+            ReportViewModel viewModel = new ReportViewModel();
+            viewModel.Location = Location.ToUpper();
+            viewModel.TotalContract = ContractCount;
+            viewModel.TotalPhone = PhoneCount;
+            list.Add(viewModel);
+
+            reports.ReportStatus = ReportStatus.Done;
+            context.Reports.Attach(reports);
+            await context.SaveChangesAsync();
+            return list;
         }
     }
 }

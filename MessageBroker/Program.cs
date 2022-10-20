@@ -1,38 +1,54 @@
-﻿using Newtonsoft.Json;
-using RabbitMQ.Client;
+﻿
+using MassTransit;
 using System;
-using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using GreenPipes;
 
+namespace EventContracts
+{
+    public interface ValueEntered
+    {
+        string Value { get; }
+    }
+}
 namespace MessageBroker
 {
-    static class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
-            while (true)
-            {
-                SendRequest();
-            }
-
+            CreateHostBuilder(args).Build().Run();
         }
+        public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureServices((hostContext, services) =>
+                {
 
-        static void SendRequest()
+                    services.AddMassTransit(cfg =>
+                    {
+                        cfg.AddBus(ConfigureBus);
+                        cfg.AddConsumer<ReportConsumer>();
+                    });
+
+                    services.AddHostedService<BusService>();
+                });
+        private static IBusControl ConfigureBus(IServiceProvider provider)
         {
-            var factory = new ConnectionFactory
+            return Bus.Factory.CreateUsingRabbitMq(cfg =>
             {
-                Uri = new Uri("amqp://guest:guest@localhost:5672")
-            };
-            using var connection = factory.CreateConnection();
-            using var channel = connection.CreateModel();
-            channel.QueueDeclare("report-queue",
-                durable: true,
-                exclusive: false,
-                autoDelete: false,
-                arguments: null);
-            var message = new ReportOrder { Location = Console.ReadLine() };
+                cfg.Host("rabbitmq://localhost");
 
-            var body = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(message));
-            channel.BasicPublish("", "report-queue", null, body);
+                cfg.ReceiveEndpoint("a-q", e =>
+                {
+                    e.PrefetchCount = 16;
+                    e.UseMessageRetry(x => x.Interval(2, 100));
+
+                    e.Consumer<ReportConsumer>(provider);
+                });
+            });
         }
     }
 }
+
