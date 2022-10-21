@@ -21,7 +21,7 @@ ve migrationlar package manager consoledan update-database komutuyla çalıştı
 *MessageBroker'ın App.config dosyasında bulunan Redis anahtarına redis-server'ın çalıştığı adres girilmelidir.  
 
 # ContractAPI
-Kişilerle ilgili bilgilerin saklandığı veritabanı ile bağlantısı olan endpoind'leri içeren API'dir. Kişi ekleme silme listeleme işlemleri aşağıda detaylandırılan  
+Kişilerle ilgili bilgilerin saklandığı veritabanı ile bağlantısı olan endpoind'leri içeren API'dir. Kişi ekleme silme listeleme işlemleri aşağıda detaylandırılan
 endpoindler ile sağlanır.  
 **Endpoindler ;**  
 *[Get] (ApiAdres)/GetContractsAndInfos : Tüm kişileri ve iletişim bilgileri getiren bir liste döndürür.  
