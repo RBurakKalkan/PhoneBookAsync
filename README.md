@@ -1,7 +1,7 @@
 # PhoneBookAsync
 Bu proje bir telefon reheberi örneğidir. 3 farklı parçadan oluşmaktadır.
 
-*ContractAPI 
+*ContractAPI __
 *ReportAPI
 *MessageBroker
 
