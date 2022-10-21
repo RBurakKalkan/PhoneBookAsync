@@ -3,6 +3,7 @@ using System;
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MessageBroker.Listener
@@ -13,8 +14,10 @@ namespace MessageBroker.Listener
         public void Listen()
         {
             var pubSub = connectionMultiplexer.GetSubscriber();
-            pubSub.Subscribe("report-q", (channel, message) => DisplayMessage(message));
-            Console.ReadLine();
+            new Thread(() =>
+            {
+                pubSub.Subscribe("report-q", (channel, message) => DisplayMessage(message));
+            }).Start();
         }
 
         private static void DisplayMessage(RedisValue message)

@@ -15,7 +15,12 @@ namespace MessageBroker
         static ReportListener listener = new ReportListener();
         async static Task Main(string[] args)
         {
-                listener.Listen();
+            listener.Listen();
+            while (true)
+            {
+                string Location = Console.ReadLine();
+                await listener.GetJson(Location);
+            }
         }
     }
 }
