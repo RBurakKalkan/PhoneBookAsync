@@ -19,6 +19,7 @@ ve migrationlar package manager consoledan update-database komutuyla çalıştı
 *ReportAPI'nin Appsettings.json dosyasında bulunan Redis anahtarına redis-server'ın çalıştığı adres girilmelidir.  
 *MessageBroker'ın App.config dosyasında bulunan ReportApi anahtarına ReportAPI'nin çalıştığı adres girilmelidir.  
 *MessageBroker'ın App.config dosyasında bulunan Redis anahtarına redis-server'ın çalıştığı adres girilmelidir.  
+*2 API de aynı anda çalıştırılmalı, Istendiği taktirde MessageBroker da açılıp Rapor istatistikleri takip edilebilir.  
 
 # ContractAPI
 Kişilerle ilgili bilgilerin saklandığı veritabanı ile bağlantısı olan endpoind'leri içeren API'dir. Kişi ekleme silme listeleme işlemleri aşağıda detaylandırılan
