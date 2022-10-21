@@ -8,6 +8,7 @@ namespace ReportApi.Models
         public int ContractsId { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
+        public string FirmName { get; set; }
         public List<ContractsInfo> ContractsInfo { get; set; }
     }
 }
