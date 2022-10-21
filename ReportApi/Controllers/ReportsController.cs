@@ -66,7 +66,7 @@ namespace ReportApi.Controllers
         {
             var pubSub = ConnectionMultiplexer.GetSubscriber(); 
             pubSub.Subscribe("report-q", (channel, message) => DisplayMessage(message));
-            pubSub.Publish("report-q","Report Preparing...");
+            pubSub.Publish("report-q","Report is preparing...");
 
             Reports reports = new()
             {
