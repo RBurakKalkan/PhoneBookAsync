@@ -11,7 +11,7 @@ Bu proje bir telefon reheberi örneğidir. 3 farklı parçadan oluşmaktadır.
 
 # Başlarken;
 *Redis-server ve postgreSQL kurulmalı 
-*ContractAPI'nin Appsettings.json dosyasında bulunan ConnectionStrings:DefaultConnection anahtarına PostgreSQL connectionstring bilgisi girilmeli
+*ContractAPI'nin Appsettings.json dosyasında bulunan ConnectionStrings:DefaultConnection anahtarına PostgreSQL connectionstring bilgisi girilmeli_
 ve migrationlar package manager consoledan update-database komutuyla çalıştırılmalıdır (ContractsDB).
 *ReportAPI'nin Appsettings.json dosyasında bulunan ConnectionStrings:DefaultConnection anahtarına PostgreSQL connectionstring bilgisi girilmeli
 ve migrationlar package manager consoledan update-database komutuyla çalıştırılmalıdır (ReportDB).
